@@ -137,10 +137,15 @@ sudo systemctl enable "${SERVICE}"
 
 success ":: Override installed for ${SERVICE} at ${OVERRIDE_FILE}"
 
-# 7.6) Sneak in the NAS sync dir
+# 8) Create NAS sync dir
 mkdir -p $HOME/Mjolnir
 
-# 8) Prompt for reboot
+# 9) Zen fixes
+sudo mkdir /etc/1password
+sudo touch /etc/1password/custom_allowed_browsers
+echo "zen-bin" | sudo tee -a /etc/1password/custom_allowed_browsers
+
+# 10) Prompt for reboot
 echo
 read -rp "Restore  complete. Reboot now? [y/N]: " REPLY
 case "${REPLY,,}" in
