@@ -143,7 +143,7 @@ mkdir -p $HOME/Mjolnir
 # 9) Zen fixes
 sudo mkdir /etc/1password
 sudo touch /etc/1password/custom_allowed_browsers
-echo "zen-bin" | sudo tee -a /etc/1password/custom_allowed_browsers
+sudo echo "zen-bin" | sudo tee -a /etc/1password/custom_allowed_browsers
 
 # 10) Prompt for reboot
 echo
