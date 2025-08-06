@@ -146,8 +146,10 @@ sudo dnf install -y tuigreet
 
 # 7.1) Copy files
 sudo rm /etc/greetd/config.toml
-sudo cp $HOME/Documents/Scripts/greetd/config.toml /etc/greetd/
+sudo rm /etc/vconsole.conf
+sudo cp $HOME/Documents/Scripts/greetd/fd-config.toml /etc/greetd/config.toml
 sudo cp $HOME/Documents/Scripts/greetd/vtrgb /etc/vtrgb
+sudo cp $HOME/Documents/Scripts/greetd/vconsole.conf /etc/vconsole.conf
 
 # 7.2) Set service locations
 SERVICE=greetd.service

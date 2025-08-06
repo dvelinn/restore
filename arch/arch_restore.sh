@@ -114,7 +114,7 @@ sudo pacman --noconfirm -S greetd-tuigreet
 
 # 7.1) Copy files
 sudo rm /etc/greetd/config.toml
-sudo cp $HOME/Documents/Scripts/greetd/config.toml /etc/greetd/
+sudo cp $HOME/Documents/Scripts/greetd/ar-config.toml /etc/greetd/config.toml
 sudo cp $HOME/Documents/Scripts/greetd/vtrgb /etc/vtrgb
 
 # 7.2) Set service locations
