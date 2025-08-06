@@ -95,28 +95,28 @@ info ":: Setting up flathub"
 sudo flatpak remote-delete flathub
 sudo remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# 6) Install 1Password
+# 7) Install 1Password
 info ":: Installing 1Password"
 sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 sudo dnf install -y 1password
 
-# 7) Install Mullvad
+# 8) Install Mullvad
 info ":: Installing Mullvad"
 sudo dnf config-manager addrepo --from-repofile=https://repository.mullvad.net/rpm/stable/mullvad.repo
 sudo dnf install -y mullvad-vpn
 
 
-# 4) Install packages via dnf
+# 9) Install packages via dnf
 if [[ -f "${PKGLIST_FILE}" ]]; then
   info ":: Installing remaining packages from ${PKGLIST_FILE}..."
-sudo dnf install -y $(< pkglist.txt)
+sudo dnf install -y $(< "$PKGLIST_FILE")
   success ":: Package installs complete"
 else
   error ":: Package list ${PKGLIST_FILE} not found; skipping"
 fi
 
-# 5) Install Flatpaks
+# 10) Install Flatpaks
 if [[ -f "${FLATPAKLIST_FILE}" ]]; then
   info ":: Installing Flatpaks from ${FLATPAKLIST_FILE}..."
   while read -r app; do
@@ -129,7 +129,7 @@ else
   error ":: Flatpak list ${FLATPAKLIST_FILE} not found; skipping"
 fi
 
-# 6) Install ML4W helper apps
+# 11) Install ML4W helper apps
 info ":: Installing the ML4W Apps"
 
 bash -c "$(curl -s https://raw.githubusercontent.com/mylinuxforwork/dotfiles-welcome/master/setup.sh)"
@@ -138,48 +138,48 @@ bash -c "$(curl -s https://raw.githubusercontent.com/mylinuxforwork/dotfiles-sid
 bash -c "$(curl -s https://raw.githubusercontent.com/mylinuxforwork/dotfiles-calendar/master/setup.sh)"
 bash -c "$(curl -s https://raw.githubusercontent.com/mylinuxforwork/hyprland-settings/master/setup.sh)"
 
-# 7) A little configuration for greetd
+# 12) A little configuration for greetd
 info ":: Configuring tuigreet session manager"
 
-# 7.0.1 Make sure tuigreet is actually installed
+# 12.0.1 Make sure tuigreet is actually installed
 sudo dnf install -y tuigreet
 
-# 7.1) Copy files
+# 12.1) Copy files
 sudo rm /etc/greetd/config.toml
 sudo rm /etc/vconsole.conf
 sudo cp $HOME/Documents/Scripts/greetd/fd-config.toml /etc/greetd/config.toml
 sudo cp $HOME/Documents/Scripts/greetd/vtrgb /etc/vtrgb
 sudo cp $HOME/Documents/Scripts/greetd/vconsole.conf /etc/vconsole.conf
 
-# 7.2) Set service locations
+# 12.2) Set service locations
 SERVICE=greetd.service
 OVERRIDE_DIR="/etc/systemd/system/${SERVICE}.d"
 OVERRIDE_FILE="${OVERRIDE_DIR}/override.conf"
 
-# 7.3) Make sure the drop-in directory exists
+# 12.3) Make sure the drop-in directory exists
 sudo mkdir -p "${OVERRIDE_DIR}"
 
-# 7.4) Write the override
+# 12.4) Write the override
 sudo tee "${OVERRIDE_FILE}" > /dev/null <<'EOF'
 [Service]
 ExecStartPre=/usr/bin/setvtrgb /etc/vtrgb
 EOF
 
-# 7.5) Reload systemd and enable the service
+# 12.5) Reload systemd and enable the service
 sudo systemctl daemon-reload
 sudo systemctl enable "${SERVICE}"
 
 success ":: Override installed for ${SERVICE} at ${OVERRIDE_FILE}"
 
-# 8) Create NAS sync dir
+# 13) Create NAS sync dir
 mkdir -p $HOME/Mjolnir
 
-# 9) Zen fixes
+# 14) Zen fixes
 sudo mkdir /etc/1password
 sudo touch /etc/1password/custom_allowed_browsers
 echo "zen-bin" | sudo tee -a /etc/1password/custom_allowed_browsers
 
-# 10) Prompt for reboot
+# 15) Prompt for reboot
 echo
 read -rp "Restore  complete. Reboot now? [y/N]: " REPLY
 case "${REPLY,,}" in
