@@ -33,9 +33,9 @@ rsync -aAX --info=progress2 \
 cd "${HOME}"
 
 # 7. tar and compress the backup dir
-tar -czpf "${HOME}/ML4W_Backup-${DATE}.tar.gz" -C "${HOME}" "Backup"
+tar -czpf "${HOME}/Arch_Backup-${DATE}.tar.gz" -C "${HOME}" "Backup"
 
 # 8. remove temp backup dir
 rm -rf "${BACKUP_DIR}"
 
-echo "Backup complete: ${HOME}/ML4W_Backup-${DATE}.tar.gz"
+echo "Backup complete: ${HOME}/Arch_Backup-${DATE}.tar.gz"

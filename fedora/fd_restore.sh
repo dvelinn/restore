@@ -34,8 +34,8 @@ read -rp "Enter NAS username: " NAS_USER
 read -rp "Enter NAS IP address: " NAS_HOST
 
 # Set file paths
-NAS_BACKUP_DIR="/volume1/Linux/Backup/ML4W"
-NAS_DOWNLOAD_DIR="/Linux/Backup/ML4W"
+NAS_BACKUP_DIR="/volume1/Linux/Backup/Fedora"
+NAS_DOWNLOAD_DIR="/Linux/Backup/Fedora"
 LOCAL_DOWNLOAD_DIR="${HOME}/Downloads"
 
 # Package files
@@ -74,14 +74,46 @@ info ":: Extracting backup into your home..."
 tar --strip-components=1 -xzf "${BACKUP_FILE}" -C "${HOME}"
 success ":: Extraction complete"
 
-# 4) Install pacman packages
+# 4) Enable copr repos
+info ":: Enabling copr repos.."
+sudo dnf copr enable erikreider/SwayNotificationCenter -y
+sudo dnf copr enable monkeygold/nautilus-open-any-terminal -y
+sudo dnf copr enable peterwu/rendezvous -y
+sudo dnf copr enable phracek/PyCharm -y
+sudo dnf copr enable solopasha/hyprland -y
+sudo dnf copr enable tofik/nwg-shell -y
+sudo dnf copr enable sneexy/zen-browser -y
+
+# 5) Enable RPM Fusion repos
+info ":: Enabling RPM Fusion.."
+sudo dnf install -y \
+  https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+  https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-steam-$(rpm -E %fedora).rpm
+
+# 6) Switch to official flathub
+info ":: Setting up flathub"
+sudo flatpak remote-delete flathub
+sudo remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+# 6) Install 1Password
+info ":: Installing 1Password"
+sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+sudo dnf install -y 1password
+
+# 7) Install Mullvad
+info ":: Installing Mullvad"
+sudo dnf config-manager addrepo --from-repofile=https://repository.mullvad.net/rpm/stable/mullvad.repo
+sudo dnf install -y mullvad-vpn
+
+
+# 4) Install packages via dnf
 if [[ -f "${PKGLIST_FILE}" ]]; then
-  info ":: Installing pacman packages from ${PKGLIST_FILE}..."
-grep -Ev '^(1password|mullvad-vpn-bin)$' "${PKGLIST_FILE}" \
-  | paru -Syu --noconfirm --needed -
-  success ":: Pacman installs complete"
+  info ":: Installing remaining packages from ${PKGLIST_FILE}..."
+sudo dnf install -y $(< pkglist.txt)
+  success ":: Package installs complete"
 else
-  error ":: Pacman list ${PKGLIST_FILE} not found; skipping"
+  error ":: Package list ${PKGLIST_FILE} not found; skipping"
 fi
 
 # 5) Install Flatpaks
@@ -90,7 +122,7 @@ if [[ -f "${FLATPAKLIST_FILE}" ]]; then
   while read -r app; do
     [[ "$app" =~ ^# ]] && continue
     [[ -z "$app" ]] && continue
-    flatpak install -y flathub "$app" || error ":: Failed: $app"
+    sudo flatpak install -y flathub "$app" || error ":: Failed: $app"
   done < "${FLATPAKLIST_FILE}"
   success ":: Flatpak installs complete"
 else
@@ -110,7 +142,7 @@ bash -c "$(curl -s https://raw.githubusercontent.com/mylinuxforwork/hyprland-set
 info ":: Configuring tuigreet session manager"
 
 # 7.0.1 Make sure tuigreet is actually installed
-sudo pacman --noconfirm -S greetd-tuigreet
+sudo dnf install -y tuigreet
 
 # 7.1) Copy files
 sudo rm /etc/greetd/config.toml
