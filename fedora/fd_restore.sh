@@ -52,7 +52,7 @@ ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" true
 # 1) Find the newest backup on the NAS
 info ":: Finding latest backup on NAS..."
 LATEST_FILE=$(ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" \
-  "cd ${NAS_BACKUP_DIR} && ls -1t ML4W_Backup-*.tar.gz | head -n1")
+  "cd ${NAS_BACKUP_DIR} && ls -1t Fedora_Backup-*.tar.gz | head -n1")
 
 if [[ -z "$LATEST_FILE" ]]; then
   error ":: No backups found in ${NAS_BACKUP_DIR}" >&2
