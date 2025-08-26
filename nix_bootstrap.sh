@@ -4,7 +4,7 @@ set -euo pipefail
 # --- SETTINGS ---
 REPO_SSH="git@github.com:dvelinn/nixos.git"
 CLONE_DIR="$HOME/.voidgazer"
-# ---------------
+# -----------------
 
 echo "[1/3] GitHub device login (approve on phone)…"
 gh auth login --hostname github.com --git-protocol ssh --web
